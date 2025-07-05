@@ -1,3 +1,3 @@
-start chrome "http://localhost:3000" --profile-directory="Profile 1"
+start http://localhost:3000
 
 npm run dev 
