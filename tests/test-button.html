@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Modbus Test Button</title>
+  <style>
+    #test-button, #connect-button {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      color: white;
+      background-color: grey;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 0.5rem;
+    }
+
+    #test-button.on {
+      background-color: green;
+    }
+
+    #test-button.off {
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>PLC Test Controls</h2>
+
+  <label for="ip">IP Address:</label>
+  <input type="text" id="ip" value="127.0.0.1" />
+  <label for="port">Port:</label>
+  <input type="number" id="port" value="8300" />
+
+  <button id="connect-button">Connect</button>
+  <br>
+  <button id="test-button" disabled>Test Coil</button>
+
+  <script>
+    const plcId = 1;
+    const tag = 100;
+    const button = document.getElementById("test-button");
+    const connectButton = document.getElementById("connect-button");
+
+    async function connectPLC() {
+      const ip = document.getElementById("ip").value;
+      const port = parseInt(document.getElementById("port").value);
+
+      try {
+        const response = await fetch(`/api/plc/${plcId}/connect`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ip, port })
+        });
+
+        if (response.ok) {
+          console.log("Connected to PLC!");
+          button.disabled = false;
+          startPolling();
+        } else {
+          console.error("Failed to connect to PLC");
+        }
+      } catch (err) {
+        console.error("Connection error:", err);
+      }
+    }
+
+    async function updateButtonState() {
+      try {
+        const response = await fetch(`/api/plc/${plcId}/read/${tag}`);
+        const data = await response.json();
+        const state = data.value;
+
+        if (state) {
+          button.classList.add("on");
+          button.classList.remove("off");
+        } else {
+          button.classList.remove("on");
+          button.classList.add("off");
+        }
+      } catch (err) {
+        console.error("Failed to read coil:", err);
+        button.classList.remove("on", "off");
+      }
+    }
+
+    async function sendWritePulse() {
+      try {
+        await fetch(`/api/plc/${plcId}/write`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tag, value: true })
+        });
+      } catch (err) {
+        console.error("Failed to write coil:", err);
+      }
+    }
+
+    function startPolling() {
+      updateButtonState();
+      setInterval(updateButtonState, 1000);
+    }
+
+    connectButton.addEventListener("click", connectPLC);
+    button.addEventListener("click", sendWritePulse);
+  </script>
+</body>
+</html>
