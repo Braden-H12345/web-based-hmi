@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Modbus Test Button - Dual PLC</title>
+  <style>
+    .button, .connect-button {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      color: white;
+      background-color: grey;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 0.5rem;
+    }
+
+    .on {
+      background-color: green !important;
+    }
+
+    .off {
+      background-color: red !important;
+    }
+
+    .plc-section {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>PLC 1 Controls</h2>
+  <div class="plc-section">
+    <label for="ip1">IP Address:</label>
+    <input type="text" id="ip1" value="127.0.0.1" />
+    <label for="port1">Port:</label>
+    <input type="number" id="port1" value="8300" />
+    <button class="connect-button" id="connect1">Connect PLC 1</button>
+    <br />
+    <button class="button" id="test1" hidden>Test Coil PLC 1</button>
+  </div>
+
+  <h2>PLC 2 Controls</h2>
+  <div class="plc-section">
+    <label for="ip2">IP Address:</label>
+    <input type="text" id="ip2" value="127.0.0.1" />
+    <label for="port2">Port:</label>
+    <input type="number" id="port2" value="8309" />
+    <button class="connect-button" id="connect2">Connect PLC 2</button>
+    <br />
+    <button class="button" id="test2" hidden>Test Coil PLC 2</button>
+  </div>
+
+  <script>
+    const tags = {
+      1: 0o11, // Tag for PLC 1
+      2: 0o12  // Tag for PLC 2 (use different coil)
+    };
+
+    function setupPLCControls(plcId, connectBtnId, testBtnId, ipInputId, portInputId) {
+      const connectBtn = document.getElementById(connectBtnId);
+      const testBtn = document.getElementById(testBtnId);
+
+      connectBtn.addEventListener("click", async () => {
+        const ip = document.getElementById(ipInputId).value;
+        const port = parseInt(document.getElementById(portInputId).value);
+
+        try {
+          const response = await fetch(`/api/plc/${plcId}/connect`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ip, port })
+          });
+
+          if (response.ok) {
+            console.log(`Connected to PLC ${plcId}`);
+            testBtn.hidden = false;
+            startPolling(plcId, testBtn);
+          } else {
+            console.error(`Failed to connect to PLC ${plcId}`);
+          }
+        } catch (err) {
+          console.error(`Connection error (PLC ${plcId}):`, err);
+        }
+      });
+
+      testBtn.addEventListener("click", async () => {
+        try {
+          await fetch(`/api/plc/${plcId}/write`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tag: tags[plcId], value: true })
+          });
+        } catch (err) {
+          console.error(`Failed to write coil (PLC ${plcId}):`, err);
+        }
+      });
+    }
+
+    function startPolling(plcId, buttonElement) {
+      async function updateButtonState() {
+        try {
+          const response = await fetch(`/api/plc/${plcId}/read/${tags[plcId]}`);
+          const data = await response.json();
+          const state = data.value;
+
+          if (state) {
+            buttonElement.classList.add("on");
+            buttonElement.classList.remove("off");
+          } else {
+            buttonElement.classList.remove("on");
+            buttonElement.classList.add("off");
+          }
+        } catch (err) {
+          console.error(`Failed to read coil (PLC ${plcId}):`, err);
+          buttonElement.classList.remove("on", "off");
+        }
+      }
+
+      updateButtonState();
+      setInterval(updateButtonState, 1000);
+    }
+
+    // Initialize both PLC setups
+    setupPLCControls(1, "connect1", "test1", "ip1", "port1");
+    setupPLCControls(2, "connect2", "test2", "ip2", "port2");
+  </script>
+</body>
+</html>

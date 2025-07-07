@@ -11,8 +11,8 @@ const plcRoute = require("./routing/plc-routing");
 //mounting of the routes
 expressServer.use(express.json());
 expressServer.use("/api/plc", plcRoute);
-expressServer.use(express.static(path.resolve(__dirname, "../../../tests")));
+expressServer.use(express.static(path.join(process.cwd(), "public")));
 
-expressServer.listen(PORT, () => console.log('Server is running. Found on port ${PORT}'));
+expressServer.listen(PORT, () => console.log(`Server is running. Found on port ${PORT}`));
 
 

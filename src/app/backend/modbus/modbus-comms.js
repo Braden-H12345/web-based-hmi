@@ -9,9 +9,14 @@ async function establishConnection(ipAddress,portToUse, id) {
         try {
             console.log('Connection established');
             const modbusClient = new ModbusRTU();
-            await modbusClient.connectTCP(ipAddress, {port: portToUse});
+            await modbusClient.connectTCP(ipAddress,{port: portToUse});
             modbusClient.setID(id);
+            modbusClient.setTimeout(1000);
             activePLCs[id] = modbusClient;
+            console.log('ipAddress: ', ipAddress);
+            console.log('port: ', portToUse);
+            console.log('id: ', id);
+
         } catch (err) {
             console.log(`Error in establishConnection for ${ipAddress}:`, err);
         }
@@ -44,7 +49,9 @@ async function setTag(modbusTag, state, id) {
     const modbusClient = getClient(id);
     try {
         console.log('Writing coil');
+        console.log('data: ', modbusTag, " for id: ", id, " to: ", state);
         await modbusClient.writeCoil(modbusTag, state);
+        console.log('data after writeCoil method: ', modbusTag, " for id: ", id, " to: ", state);
     } catch (err) {
         console.log(`Error in setTag: PLC ${id}`, err);
     }
@@ -57,10 +64,14 @@ async function readTag(modbusTag, id) {
     try {
         console.log('Reading coil');
         const result = await modbusClient.readCoils(modbusTag, 1);
-        return result.data[0];
+        console.log('Read result:', result);
+
+        const value = result.data?.[0] ?? false;
+        console.log('Returning coil value:', value);
+        return value;
     } catch (err) {
         console.log(`Error in readTag: PLC ${id}`, err);
-        return null;
+        return false; // Fail-safe default
     }
 }
 

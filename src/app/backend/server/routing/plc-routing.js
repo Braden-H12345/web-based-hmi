@@ -17,7 +17,8 @@ router.post("/:id/connect", async (req, res) => {
 
     const { ip, port } = req.body;
     try {
-        await establishConnection({ ip, port, id: req.params.id });
+        console.log("Connecting to:", ip, port, req.params.id);
+        await establishConnection( ip, port, req.params.id );
         res.sendStatus(200);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -47,7 +48,7 @@ router.get("/:id/read/:tag", async(req, res) => {
     try
     {
         const result = await readTag(req.params.tag, req.params.id);
-        res.status(201).json({tag: req.params.tag, value: result});
+        res.status(200).json({tag: req.params.tag, value: result});
         console.log("Attempted to read tag ", req.params.tag, " for PLC ", req.params.id);
     }
     catch(err)
@@ -66,7 +67,7 @@ router.post("/:id/write", async(req, res) => {
     try
     {
         await setTag(tag, value, req.params.id);
-        res.sendStatus(202);
+        res.sendStatus(200);
         console.log("Attempted to write value ", value, "at location ", tag, " for PLC ", req.params.id);
     }
     catch(err)
