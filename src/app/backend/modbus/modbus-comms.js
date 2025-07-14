@@ -47,11 +47,37 @@ async function disconnectPLC(id) {
 //SET PLC TAG
 async function setTag(modbusTag, state, id) {
     const modbusClient = getClient(id);
+
+    // Sanitize and parse
+    let cleanedTag = typeof modbusTag === "string" ? modbusTag.trim() : modbusTag;
+    let address = Number(cleanedTag);
+
+    const actualTag = address - 1;
+
+    if (actualTag < 0) {
+        console.error("Address out of range:", actualTag);
+        throw new RangeError(`Actual tag must be >= 0. Got ${actualTag}`);
+    }
+
+    if (typeof state !== "boolean") {
+        console.warn("Warning: state should be boolean. Got:", state);
+    }
+
     try {
-        console.log('Writing coil');
-        console.log('data: ', modbusTag, " for id: ", id, " to: ", state);
-        await modbusClient.writeCoil(modbusTag, state);
-        console.log('data after writeCoil method: ', modbusTag, " for id: ", id, " to: ", state);
+
+            if (!modbusClient) {
+                console.error(`Modbus client for PLC "${id}" not found.`);
+                return;
+            }
+
+            if (!modbusClient.isOpen) {
+                console.error(`Modbus client for PLC "${id}" is not open.`);
+                return;
+            }
+            
+        console.log("Writing to address:", actualTag, "State:", state);
+        await modbusClient.writeCoil(actualTag, state);
+        console.log("Successfully wrote to coil.");
     } catch (err) {
         console.log(`Error in setTag: PLC ${id}`, err);
     }
@@ -61,9 +87,10 @@ async function setTag(modbusTag, state, id) {
 //READ PLC TAG VALUE
 async function readTag(modbusTag, id) {
     const modbusClient = getClient(id);
+    const actualTag = modbusTag - 1;
     try {
         console.log('Reading coil');
-        const result = await modbusClient.readCoils(modbusTag, 1);
+        const result = await modbusClient.readCoils(actualTag, 1);
         console.log('Read result:', result);
 
         const value = result.data?.[0] ?? false;

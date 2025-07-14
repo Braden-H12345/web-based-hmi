@@ -13,6 +13,17 @@ const {establishConnection, disconnectPLC, readTag, setTag} = require("../../mod
 
 
 //CONNECT TO PLC
+router.use("/:id", (req, res, next) => {
+  const plcId = req.params.id;
+
+  if (!plcId || typeof plcId !== "string" || plcId.trim() === "") {
+    return res.status(400).json({ error: "Missing or invalid PLC ID" });
+  }
+
+  next(); // continue to actual route
+});
+
+
 router.post("/:id/connect", async (req, res) => {
 
     const { ip, port } = req.body;
