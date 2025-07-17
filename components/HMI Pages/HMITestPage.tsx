@@ -2,41 +2,37 @@
 import {useEffect, useState} from "react";
 import { PLCProvider } from "../Context/PLCContext";
 import MomentaryButton from "../HMI Components/MomentaryButton";
+import ToggleButton from "../HMI Components/ToggleButton";
 
 export default function HMIPage() {
-  const pagePLCId = "thisisastring";
+  const pagePLCId = 1;
   const ip = "192.168.100.69";
   const port = 502;
 
   // Optional: track if PLC is connected
   const [connected, setConnected] = useState(false);
 
-  useEffect(() => {
+ useEffect(() => {
     const connectPLC = async () => {
 
     console.log(`Calling: /api/plc/${pagePLCId}/connect with ip=${ip}, port=${port}`);
 
-  if (!pagePLCId || typeof pagePLCId !== "string" || pagePLCId.trim() === "") {
-    console.error(`Invalid PLC ID: ${pagePLCId}`);
-    return;
-  }
+try {
+          const response = await fetch(`/api/plc/${pagePLCId}/connect`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ip, port })
+          });
 
-      try {
-        const res = await fetch(`/api/plc/${pagePLCId}/connect`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ip, port })
-        });
-
-        if (res.ok) {
-          console.log(`Connected to PLC ${pagePLCId}`);
-          setConnected(true);
-        } else {
-          console.error("PLC connection failed");
+          if (response.ok) {
+            console.log(`Connected to PLC ${pagePLCId}`);
+            setConnected(true);
+          } else {
+            console.error(`Failed to connect to PLC ${pagePLCId}`);
+          }
+        } catch (err) {
+          console.error(`Connection error (PLC ${pagePLCId}):`, err);
         }
-      } catch (err) {
-        console.error("Connection error:", err);
-      }
     };
 
     connectPLC();
@@ -49,9 +45,9 @@ export default function HMIPage() {
     <PLCProvider plcId={pagePLCId}>
       <h1>HMI for {pagePLCId}</h1>
       <div> 
-            <MomentaryButton modbusTag="000210" label="ADA Door"/>
+          <MomentaryButton modbusTag={101} label="Override"/>
           <br></br>
-          <MomentaryButton modbusTag="000101" label="Knock override"/>
+          <ToggleButton  modbusTag={210} label="ADA Door"/>
       </div>
     </PLCProvider>
   );

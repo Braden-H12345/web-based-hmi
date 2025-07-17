@@ -28,5 +28,4 @@ expressServer.listen(3000, (err) => {
     console.log("> Unified express + next server ready on http://localhost:3000");
 });
 
-
 });

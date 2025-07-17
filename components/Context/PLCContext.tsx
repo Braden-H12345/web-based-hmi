@@ -4,7 +4,7 @@ import React, {Children, createContext, useContext} from 'react';
 
 interface PLCContextType
 {
-    plcId: string;
+    plcId: number;
 }
 
 const PLCContext = createContext<PLCContextType | null>(null);
@@ -19,7 +19,7 @@ export const PLCProvider = ({
     plcId,
     children
 }: {
-    plcId: string;
+    plcId: number;
     children: React.ReactNode;
 }) => {
     return (

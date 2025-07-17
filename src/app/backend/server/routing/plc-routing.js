@@ -60,7 +60,7 @@ router.get("/:id/read/:tag", async(req, res) => {
     {
         const result = await readTag(req.params.tag, req.params.id);
         res.status(200).json({tag: req.params.tag, value: result});
-        console.log("Attempted to read tag ", req.params.tag, " for PLC ", req.params.id);
+        //console.log("Attempted to read tag ", req.params.tag, " for PLC ", req.params.id);
     }
     catch(err)
     {
@@ -73,13 +73,32 @@ router.get("/:id/read/:tag", async(req, res) => {
 //WRITE A VALUE TO AN ADDRESS
 router.post("/:id/write", async(req, res) => {
 
+    const id = req.params.id;
     const {tag, value} = req.body;
+
+    console.log("Tag type:", typeof tag, "Tag value:", tag);
+
+    console.log(`Received write: id=${id}, tag=${tag}, value=${value}`);
+
+    if (typeof tag !== "number" || isNaN(tag)) {
+    return res.status(400).json({ error: `Invalid tag: ${tag}` });
+  }
+
+  if (typeof value !== "boolean") {
+    return res.status(400).json({ error: `Value must be a boolean, got: ${value}` });
+  }
+
+    
+  if (tag < 0) {
+    return res.status(400).json({ error: `Parsed address out of range: ${tag}` });
+  }
+
 
     try
     {
-        await setTag(tag, value, req.params.id);
+        await setTag(tag, value, id);
         res.sendStatus(200);
-        console.log("Attempted to write value ", value, "at location ", tag, " for PLC ", req.params.id);
+        //console.log("Attempted to write value ", value, "at location ", tag, " for PLC ", req.params.id);
     }
     catch(err)
     {
