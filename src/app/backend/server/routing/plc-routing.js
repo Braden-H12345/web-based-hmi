@@ -1,11 +1,11 @@
 //This is the routing for PLC related communication. This is simply routing page requests to the modbus-comms methods. 
 //These methods simply connect or disconnect from the PLC or read or write data to the PLC.
 
-const express = require("express");
+import express from 'express';
 
 const router = express.Router();
 
-const {establishConnection, disconnectPLC, readTag, setTag} = require("../../modbus/modbus-comms"); //takes these methods from modbus-comms
+import {establishConnection, disconnectPLC, readTag, setTag} from "../../modbus/modbus-comms.js"; //takes these methods from modbus-comms
 
 
 
@@ -107,4 +107,4 @@ router.post("/:id/write", async(req, res) => {
 
 });
 
-module.exports = router;
+export default router;

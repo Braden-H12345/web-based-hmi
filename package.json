@@ -1,15 +1,18 @@
 {
   "name": "web-based-hmi",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "node ./src/app/backend/server/express-server.js",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "node generate-page.js"
   },
   "dependencies": {
     "express": "^5.1.0",
+    "inquirer": "^12.8.0",
     "modbus-serial": "^8.0.21-no-serial-port",
     "next": "^15.3.5",
     "react": "^19.1.0",

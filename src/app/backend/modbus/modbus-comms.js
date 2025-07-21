@@ -1,10 +1,30 @@
-const ModbusRTU = require("modbus-serial");
+import ModbusRTU from "modbus-serial";
 
 const activePLCs = {}; // Map of ID -> ModbusRTU client
 
 
+//internal function to resolve tags into the proper format for modbus addresses. DO NOT EXPORT. DO NOT WANT THIS ACCESSIBLE TO ANYTHING OUTSIDE COMMS
+function resolveTag(tag) {
+  const num = parseInt(tag);
+
+  if (num >= 1 && num <= 99999) {
+    return { func: 'readCoils', address: num - 1 };
+  }
+  if (num >= 100001 && num <= 199999) {
+    return { func: 'readDiscreteInputs', address: num - 100001 };
+  }
+  if (num >= 300001 && num <= 399999) {
+    return { func: 'readInputRegisters', address: num - 300001 };
+  }
+  if (num >= 400001 && num <= 499999) {
+    return { func: 'readHoldingRegisters', address: num - 400001 };
+  }
+  throw new Error(`Unsupported Modbus tag format: ${tag}`);
+}
+
+
 //CONNECT TO PLC
-async function establishConnection(ipAddress,portToUse, id) {
+export async function establishConnection(ipAddress,portToUse, id) {
     if (!activePLCs[id]) {
         try {
             console.log('Connection established');
@@ -33,7 +53,7 @@ function getClient(id) {
 
 
 //DISCONNECT FROM PLC
-async function disconnectPLC(id) {
+export async function disconnectPLC(id) {
     const modbusClient = getClient(id);
     if (modbusClient) {
         modbusClient.close(() => {
@@ -45,7 +65,7 @@ async function disconnectPLC(id) {
 
 
 //SET PLC TAG
-async function setTag(modbusTag, state, id) {
+export async function setTag(modbusTag, state, id) {
   const address = modbusTag - 1;
 
   if (address < 0) {
@@ -72,27 +92,16 @@ async function setTag(modbusTag, state, id) {
 
 
 //READ PLC TAG VALUE
-async function readTag(modbusTag, id) {
+export async function readTag(modbusTag, id) {
     const modbusClient = getClient(id);
-    const actualTag = modbusTag - 1;
-    try {
-        //console.log('Reading coil');
-        const result = await modbusClient.readCoils(actualTag, 1);
-        //console.log('Read result:', result);
+    const { func, address } = resolveTag(modbusTag);
 
-        const value = result.data?.[0] ?? false;
-        //console.log('Returning coil value:', value);
-        return value;
-    } catch (err) {
-        console.log(`Error in readTag: PLC ${id}`, err);
-        return false; // Fail-safe default
-    }
+  try {
+    const result = await modbusClient[func](address, 1);
+    return result.data?.[0] ?? false;
+  } catch (err) {
+    console.error(`Error in readTag: PLC ${id}`, err);
+    return false;
+  }
 }
-
-module.exports = {
-    establishConnection,
-    disconnectPLC,
-    readTag,
-    setTag
-};
 

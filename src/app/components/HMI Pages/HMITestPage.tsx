@@ -1,8 +1,10 @@
 "use client";
 import {useEffect, useState} from "react";
 import { PLCProvider } from "../Context/PLCContext";
-import MomentaryButton from "../HMI Components/MomentaryButton";
-import ToggleButton from "../HMI Components/ToggleButton";
+import MomentaryButton from "../HMI-Components/MomentaryButton";
+import ToggleButton from "../HMI-Components/ToggleButton";
+import Indicator from "../HMI-Components/Indicator";
+import PageChanger from "../HMI-Components/PageChanger";
 
 export default function HMIPage() {
   const pagePLCId = 1;
@@ -12,7 +14,7 @@ export default function HMIPage() {
   // Optional: track if PLC is connected
   const [connected, setConnected] = useState(false);
 
- useEffect(() => {
+    useEffect(() => {
     const connectPLC = async () => {
 
     console.log(`Calling: /api/plc/${pagePLCId}/connect with ip=${ip}, port=${port}`);
@@ -48,6 +50,12 @@ try {
           <MomentaryButton modbusTag={101} label="Override"/>
           <br></br>
           <ToggleButton  modbusTag={210} label="ADA Door"/>
+          <br></br>
+          <Indicator modbusTag={100003} label="Input 1" shape="circle"/>
+          <br></br>
+          <Indicator modbusTag={100003} label="Input 1" shape="rectangle"/>
+          <br></br>
+          <PageChanger path="/frontend/pages/test-page" pageName="Test Page"/>
       </div>
     </PLCProvider>
   );
