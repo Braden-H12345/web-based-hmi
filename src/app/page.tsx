@@ -9,6 +9,8 @@ import HMIPage from "./components/HMI Pages/HMITestPage";
 export default function Home() {
 
   return (
-    <HMIPage></HMIPage>
+    <div>
+      <a>test</a>
+    </div>
   );
 }
