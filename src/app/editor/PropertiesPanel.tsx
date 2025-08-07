@@ -5,12 +5,20 @@ import { CanvasItem } from "@/app/editor/types";
 interface PropsPanelProps {
   item: CanvasItem;
   onChange: (id: number, key: keyof CanvasItem, value: any) => void;
+  onDelete?: () => void;
 }
-export default function PropertiesPanel({ item, onChange }: PropsPanelProps) {
+export default function PropertiesPanel({ item, onChange, onDelete }: PropsPanelProps) {
   return (
     <div className="w-64 p-4 border-l">
-      <h3 className="text-lg font-bold mb-4">Properties</h3>
-      <h4 className="itemType"> Type: {item.type}</h4>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold">Properties</h2>
+        <button
+          className="text-red-500 hover:text-red-700 font-bold"
+          onClick={() => onDelete?.()}
+        >
+          Delete
+        </button>
+</div>
       <label className="block mb-2">
         Label:
         <input
