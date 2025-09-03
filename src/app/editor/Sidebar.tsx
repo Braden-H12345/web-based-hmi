@@ -9,6 +9,7 @@ export default function Sidebar() {
     { type: "ToggleButton", label: "Toggle Button" },
     { type: "MomentaryButton", label: "Momentary Button" },
     { type: "Indicator", label: "Indicator" },
+    { type: "IndicatorCircle", label: "Circle Indicator"},
   ];
 
     const saveButtonClicked = async () => {
