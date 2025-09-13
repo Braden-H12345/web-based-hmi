@@ -1,7 +1,7 @@
 "use client";
 import { useDrop } from "react-dnd";
 import { useRef } from "react";
-import { CanvasItem, DragItem, COMPONENT_SIZES } from "@/app/editor/types";
+import { CanvasItem, DragItem, COMPONENT_SIZES } from "@/app/OLD-EDITOR/types";
 
 interface CanvasProps {
   items: CanvasItem[];

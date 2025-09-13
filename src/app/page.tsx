@@ -4,13 +4,13 @@ import {useEffect} from "react";
 import Image from "next/image";
 import { PLCProvider } from "./components/Context/PLCContext";
 import MomentaryButton from "./components/HMI-Components/MomentaryButton"
-import HMIPage from "./components/HMI Pages/HMITestPage";
+import TestPage from "./components/HMI Pages/TestPage";
 
 export default function Home() {
 
   return (
     <div>
-      <a>test</a>
+      <TestPage/>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 // src/components/Editor/Sidebar.tsx
 "use client";
-import { DragItem } from "@/app/editor/types";
+import { DragItem } from "@/app/OLD-EDITOR/types";
 import { useDrag } from "react-dnd";
 
 interface PaletteItemProps extends DragItem {}

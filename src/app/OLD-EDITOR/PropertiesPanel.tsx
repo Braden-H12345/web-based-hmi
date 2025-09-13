@@ -1,6 +1,6 @@
 "use client";
 import { ChangeEvent } from "react";
-import { CanvasItem } from "@/app/editor/types";
+import { CanvasItem } from "@/app/OLD-EDITOR/types";
 
 interface PropsPanelProps {
   item: CanvasItem;
