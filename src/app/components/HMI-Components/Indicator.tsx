@@ -1,54 +1,89 @@
 "use client";
 
 import { usePLC } from "../Context/PLCContext"
-import {useEffect, useState} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface IndicatorProps
 {
     modbusTag: number;
+    secondTag?: number;
     label?: string;
     pollTimeout?: number;
-    colorOn?: string;
+    colorOn1?: string;
+    colorOn2?: string;
     colorOff?: string;
     shape: "circle" | "rectangle";
 
 }
 
-function Indicator({modbusTag=10000, label = "Default Label", colorOn = "green", colorOff = "grey", pollTimeout=1000, shape="circle"}: IndicatorProps)
+function Indicator({modbusTag=10000, secondTag = 20000, label = "Default Label", colorOn1 = "green", colorOn2 = "orange", 
+  colorOff = "grey", pollTimeout=1000, shape="circle"}: IndicatorProps)
 {
       const { plcId } = usePLC();
-  const [state, setState] = useState(false);
+  const [state1, setState1] = useState(false);
+  const [state2, setState2] = useState(false);
+
+ 
+  const mountedRef = useRef(true);
 
   useEffect(() => {
-    let isMounted = true;
+    mountedRef.current = true;
 
     const poll = async () => {
       try {
-        const res = await fetch(`/api/plc/${plcId}/read/${modbusTag}`);
-        const data = await res.json();
-        if (isMounted && typeof data.value === "boolean") {
-          setState(data.value);
-        }
+        // Always read the primary tag
+        const p1 = fetch(`/api/plc/${plcId}/read/${modbusTag}`).then((r) => r.json());
+
+        // Conditionally read the second tag
+        const p2 = secondTag != null
+          ? fetch(`/api/plc/${plcId}/read/${secondTag}`).then((r) => r.json())
+          : Promise.resolve<{ value?: boolean }>({ value: false });
+
+        const [d1, d2] = await Promise.all([p1, p2]);
+
+        if (!mountedRef.current) return;
+
+        if (typeof d1.value === "boolean") setState1(d1.value);
+        if (typeof d2.value === "boolean") setState2(d2.value);
       } catch (err) {
-        console.error(`Failed to read tag ${modbusTag} from PLC ${plcId}:`, err);
+        // If a read fails, don't flip states—just log and try again next poll
+        console.error(
+          `Indicator read error (PLC ${plcId}):`,
+          { modbusTag, secondTag, err }
+        );
       }
     };
 
+    // initial + interval
     poll();
-    const interval = setInterval(poll, pollTimeout);
+    const int = setInterval(poll, pollTimeout);
+
     return () => {
-      isMounted = false;
-      clearInterval(interval);
+      mountedRef.current = false;
+      clearInterval(int);
     };
-  }, [plcId, modbusTag, pollTimeout]);
+  }, [plcId, modbusTag, secondTag, pollTimeout]);
+
+  // decide the color:
+  const bg = useMemo(() => {
+    // If both are true (shouldn't happen but just in case):
+    if (state1 && state2) {
+      // deterministic priority: primary wins
+      return colorOn1;
+    }
+    if (state1) return colorOn1;
+    if (state2) return colorOn2;
+    return colorOff;
+  }, [state1, state2, colorOn1, colorOn2, colorOff]);
 
   const indicatorStyle: React.CSSProperties = {
     width: shape === "circle" ? "30px" : "60px",
     height: "30px",
-    backgroundColor: state ? colorOn : colorOff,
+    backgroundColor: bg,
     borderRadius: shape === "circle" ? "50%" : "6px",
     marginRight: "10px",
-    transition: "background-color 0.3s"
+    transition: "background-color 0.2s ease",
+    border: "1px solid rgba(0,0,0,.2)",
   };
 
   return (

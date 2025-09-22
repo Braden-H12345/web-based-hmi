@@ -45,6 +45,21 @@ async function askPageQuestions() {
           /^\d+$/.test(input) ? true : "Tag must be a number.",
       },
       {
+        type: "confirm",
+        name: "twoTags",
+        message: "Will this have two tags?",
+        default: false,
+        when: (answers) => answers.type === 'Indicator',
+      },
+      {
+        type: "input",
+        name: "secondTag",
+        message: "Enter second tag",
+        validate: (input) =>
+          /^\d+$/.test(input) ? true : "Tag must be a number.",
+        when: (answers) => answers.twoTags === true,
+      },
+      {
         type: "input",
         name: "label",
         message: "Enter label for this component:",
