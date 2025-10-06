@@ -5,7 +5,7 @@ import express from 'express';
 
 const router = express.Router();
 
-import {establishConnection, disconnectPLC, readTag, setTag} from "../../modbus/modbus-comms.js"; //takes these methods from modbus-comms
+import {establishConnection, disconnectPLC, readTag, setTag} from "./modbus-comms.js"; //takes these methods from modbus-comms
 
 
 

@@ -89,7 +89,7 @@ interface Item {
   y: number;
   tag: number;
   label?: string;
-  shape?: Shape; // <- the union type we want
+  shape?: Shape;
 }
 
 export default function ${pageName.replaceAll(" ", "")}() {

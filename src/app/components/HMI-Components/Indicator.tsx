@@ -9,14 +9,14 @@ interface IndicatorProps
     secondTag?: number;
     label?: string;
     pollTimeout?: number;
-    colorOn1?: string;
-    colorOn2?: string;
+    color1?: string;
+    color2?: string;
     colorOff?: string;
     shape: "circle" | "rectangle";
 
 }
 
-function Indicator({modbusTag=10000, secondTag = 20000, label = "Default Label", colorOn1 = "green", colorOn2 = "orange", 
+function Indicator({modbusTag=10000, label = "Default Label", secondTag = 20000, color1 = "green", color2 = "orange", 
   colorOff = "grey", pollTimeout=1000, shape="circle"}: IndicatorProps)
 {
       const { plcId } = usePLC();
@@ -69,12 +69,12 @@ function Indicator({modbusTag=10000, secondTag = 20000, label = "Default Label",
     // If both are true (shouldn't happen but just in case):
     if (state1 && state2) {
       // deterministic priority: primary wins
-      return colorOn1;
+      return color1;
     }
-    if (state1) return colorOn1;
-    if (state2) return colorOn2;
+    if (state1) return color1;
+    if (state2) return color2;
     return colorOff;
-  }, [state1, state2, colorOn1, colorOn2, colorOff]);
+  }, [state1, state2, color1, color2, colorOff]);
 
   const indicatorStyle: React.CSSProperties = {
     width: shape === "circle" ? "30px" : "60px",

@@ -1,0 +1,53 @@
+{
+  "slug": "home",
+  "components": [
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "tag": "000123",
+        "label": "Main Door",
+        "color1": "#16a34a",
+        "color2": "#ec8d20ff"
+      },
+      "_sourceRow": 2
+    },
+    {
+      "type": "MomentaryButton",
+      "layout": {
+        "x": 1,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "tag": "000804",
+        "label": "Open Door",
+        "pulseMs": 1000
+      },
+      "_sourceRow": 3
+    },
+    {
+      "type": "ToggleButton",
+      "layout": {
+        "x": 3,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "tag": "000901",
+        "label": "Lights"
+      },
+      "_sourceRow": 4
+    }
+  ]
+}

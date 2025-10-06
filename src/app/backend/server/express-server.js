@@ -4,7 +4,7 @@ import path from "path";
 
 
 //routing - this points to the files that do the actual legwork of specific tasks
-import plcRoute from "./routing/plc-routing.js";
+import plcRoute from "./express/plc-routing.js";
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({dev});
