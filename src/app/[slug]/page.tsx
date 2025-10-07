@@ -1,57 +1,36 @@
 import fs from "fs";
 import path from "path";
 import { notFound } from "next/navigation";
+import HMIClientRenderer from "../components/HMI-Components/HMIClientRenderer";
 import { COMPONENTS } from "../components/HMI-Components/registry";
+import type { HMIComponentDef, ComponentKey } from "../types/hmi";
 
 export const dynamic = "force-dynamic";
 
-type HMIComponentDef = {
-  type: keyof typeof COMPONENTS;
-  layout?: { x: number; y: number; w: number; h: number };
-  props?: Record<string, any>;
-};
-
 export default async function HMIPage({
   params,
-}: {
-  // Next 15: params is async
-  params: Promise<{ slug: string }>;
-}) {
+}: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
   const file = path.join(process.cwd(), "src", "app", "generated", "pages", `${slug}.json`);
   if (!fs.existsSync(file)) return notFound();
 
-  const { components } = JSON.parse(
-    fs.readFileSync(file, "utf-8")
-  ) as { components: HMIComponentDef[] };
+  const data = JSON.parse(fs.readFileSync(file, "utf-8")) as { components?: any[] };
+  const raw = Array.isArray(data.components) ? data.components : [];
 
-  return (
-    <main
-      className="p-6 grid gap-4"
-      style={{ gridTemplateColumns: "repeat(12, minmax(0, 1fr))" }}
-    >
-      {components.map((c, i) => {
-        const Cmp = COMPONENTS[c.type];
-        if (!Cmp) {
-          return (
-            <div key={i} className="border p-2 rounded bg-red-100 text-red-800">
-              Unknown component: {c.type}
-            </div>
-          );
-        }
-        const style = c.layout
-          ? {
-              gridColumn: `${c.layout.x} / span ${c.layout.w}`,
-              gridRow: `${c.layout.y} / span ${c.layout.h}`,
-            }
-          : {};
-        return (
-          <div key={i} style={style}>
-            <Cmp {...(c.props as any)} />
-          </div>
-        );
-      })}
-    </main>
-  );
+  // Runtime guard: only keep rows whose type is a known component key
+  const components: HMIComponentDef[] = raw
+    .filter((c) => typeof c?.type === "string" && c.type in COMPONENTS)
+    .map((c) => ({
+      type: c.type as ComponentKey,
+      layout: c.layout,
+      props: c.props,
+    }));
+
+  if (components.length === 0) {
+    // Optional: show 404 if nothing valid
+    // return notFound();
+  }
+
+  return <HMIClientRenderer components={components} />;
 }

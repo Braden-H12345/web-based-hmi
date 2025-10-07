@@ -2,3 +2,4 @@ component_type; x; y; w; h; plc_id; tag; label; extra_props
 Indicator; 1; 1; 2; 1; 1; 000123; "Main Door"; { "color1":"#16a34a", "color2":"#ec8d20ff" }
 MomentaryButton; 1; 3; 2; 1; 1; 000804; "Open Door"; { "pulseMs": 1000 }
 ToggleButton; 3; 1; 2; 1; 1; 000901; "Lights"; {}
+Indicator; 5; 5; 3; 1; 1; 000222; "New Indicator"; {"color1":"#111111", "color2":"#fff12f"} 
