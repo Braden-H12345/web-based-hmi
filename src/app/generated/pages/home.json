@@ -12,7 +12,7 @@
       "props": {
         "plcId": 1,
         "label": "",
-        "plcIpAddress": "192.168.100.69",
+        "plcIpAddress": "192.168.100.70",
         "plcPort": 502,
         "apiBase": "/api/plc"
       },
