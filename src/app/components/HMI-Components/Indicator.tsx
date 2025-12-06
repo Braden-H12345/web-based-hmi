@@ -1,80 +1,59 @@
 "use client";
 
-import { usePLC } from "../Context/PLCContext"
+import { usePLC } from "../Context/PLCContext";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-interface IndicatorProps
-{
-    modbusTag: number;
-    secondTag?: number;
-    label?: string;
-    pollTimeout?: number;
-    color1?: string;
-    color2?: string;
-    colorOff?: string;
-    shape: "circle" | "rectangle";
-
+interface IndicatorProps {
+  modbusTag: number;
+  label?: string;
+  pollTimeout?: number;           // overrides context.pollMs if provided
+  colorOn?: string;               // ON color
+  colorOff?: string;              // OFF color
+  shape?: "circle" | "rectangle";
 }
 
-function Indicator({modbusTag=10000, label = "Default Label", secondTag = 20000, color1 = "green", color2 = "orange", 
-  colorOff = "grey", pollTimeout=1000, shape="circle"}: IndicatorProps)
-{
-      const { plcId } = usePLC();
-  const [state1, setState1] = useState(false);
-  const [state2, setState2] = useState(false);
-
- 
+function Indicator({
+  modbusTag = 10000,
+  label = "Default Label",
+  pollTimeout,
+  colorOn = "green",
+  colorOff = "grey",
+  shape = "circle",
+}: IndicatorProps) {
+  const { connected, plcId, pollMs } = usePLC();
+  const [isOn, setIsOn] = useState(false);
   const mountedRef = useRef(true);
 
   useEffect(() => {
+    if (!connected) return; // don't poll until connected
+
     mountedRef.current = true;
+    const intervalMs = typeof pollTimeout === "number" ? pollTimeout : (pollMs ?? 1000);
 
     const poll = async () => {
       try {
-        // Always read the primary tag
-        const p1 = fetch(`/api/plc/${plcId}/read/${modbusTag}`).then((r) => r.json());
-
-        // Conditionally read the second tag
-        const p2 = secondTag != null
-          ? fetch(`/api/plc/${plcId}/read/${secondTag}`).then((r) => r.json())
-          : Promise.resolve<{ value?: boolean }>({ value: false });
-
-        const [d1, d2] = await Promise.all([p1, p2]);
-
-        if (!mountedRef.current) return;
-
-        if (typeof d1.value === "boolean") setState1(d1.value);
-        if (typeof d2.value === "boolean") setState2(d2.value);
+        const res = await fetch(`/api/plc/${plcId}/read/${modbusTag}`);
+        if (!res.ok) return; // read errors: keep last state
+        const data = await res.json(); // { tag, value }
+        const raw = (data?.value ?? data) as boolean | number;
+        const on = typeof raw === "number" ? raw !== 0 : !!raw;
+        if (mountedRef.current) setIsOn(on);
       } catch (err) {
-        // If a read fails, don't flip states—just log and try again next poll
-        console.error(
-          `Indicator read error (PLC ${plcId}):`,
-          { modbusTag, secondTag, err }
-        );
+        if (mountedRef.current) {
+          console.error(`Indicator read error (PLC ${plcId}, tag ${modbusTag}):`, err);
+        }
       }
     };
 
-    // initial + interval
     poll();
-    const int = setInterval(poll, pollTimeout);
-
+    const id = setInterval(poll, intervalMs);
     return () => {
       mountedRef.current = false;
-      clearInterval(int);
+      clearInterval(id);
     };
-  }, [plcId, modbusTag, secondTag, pollTimeout]);
+  }, [connected, plcId, modbusTag, pollMs, pollTimeout]);
 
-  // decide the color:
-  const bg = useMemo(() => {
-    // If both are true (shouldn't happen but just in case):
-    if (state1 && state2) {
-      // deterministic priority: primary wins
-      return color1;
-    }
-    if (state1) return color1;
-    if (state2) return color2;
-    return colorOff;
-  }, [state1, state2, color1, color2, colorOff]);
+  const bg = useMemo(() => (isOn ? colorOn : colorOff), [isOn, colorOn, colorOff]);
 
   const indicatorStyle: React.CSSProperties = {
     width: shape === "circle" ? "30px" : "60px",
@@ -88,7 +67,7 @@ function Indicator({modbusTag=10000, label = "Default Label", secondTag = 20000,
 
   return (
     <div style={{ display: "flex", alignItems: "center", margin: "10px 0" }}>
-      <div style={indicatorStyle}></div>
+      <div style={indicatorStyle} />
       {label && <span>{label}</span>}
     </div>
   );

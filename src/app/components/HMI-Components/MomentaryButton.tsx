@@ -1,60 +1,56 @@
 "use client";
 
-import { usePLC } from "../Context/PLCContext"
+import { usePLC } from "../Context/PLCContext";
 
-interface MomentaryButtonProps{
-    modbusTag: number;
-    label?: string;
-    timeActive?: number;
+interface MomentaryButtonProps {
+  modbusTag: number;
+  label?: string;
+  timeActive?: number; // ms
 }
 
+function MomentaryButton({
+  modbusTag = 210,
+  label = "Default Label",
+  timeActive = 1000,
+}: MomentaryButtonProps) {
+  const { connected, plcId } = usePLC();
 
-function MomentaryButton({modbusTag=210, label="Default Label", timeActive = 1000}: MomentaryButtonProps)
-{
-    const { plcId } = usePLC();
-
-    const handleClick = async () => {
-
-        try{
-
-        console.log("Sending write request:", {
-        tag: modbusTag,
-        value: true,
-        plcId
-        });
-
-        // Write TRUE to the tag
-        await fetch(`/api/plc/${plcId}/write`, {
+  const handleClick = async () => {
+    if (!connected) {
+      console.warn("Ignoring write: PLC not connected");
+      return;
+    }
+    try {
+      // TRUE
+      await fetch(`/api/plc/${plcId}/write`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tag: modbusTag, value: true }),
-        });
+      });
 
+      await new Promise((res) => setTimeout(res, timeActive));
 
-        // Wait for the configured duration
-        await new Promise((res) => setTimeout(res, timeActive));
-
-        // Write FALSE to the tag
-        await fetch(`/api/plc/${plcId}/write`, {
+      // FALSE
+      await fetch(`/api/plc/${plcId}/write`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tag: modbusTag, value: false }),
-        });
+      });
+    } catch (err) {
+      console.error(`Failed to momentary write (PLC ${plcId}, tag ${modbusTag}):`, err);
+    }
+  };
 
-        }
-        catch(err)
-        {
-            console.error(`Failed to write coil (PLC ${plcId}):`, err);
-        }
-
-    };
-
-
-
-    return <button style={{padding:'10px 20px', backgroundColor: 'grey', color: 'greenyellow'}}onClick={handleClick}>{label}</button>;
-
-    
-
-};
+  return (
+    <button
+      style={{ padding: "10px 20px", backgroundColor: "grey", color: "greenyellow" }}
+      onClick={handleClick}
+      disabled={!connected}
+      title={!connected ? "PLC not connected" : undefined}
+    >
+      {label}
+    </button>
+  );
+}
 
 export default MomentaryButton;

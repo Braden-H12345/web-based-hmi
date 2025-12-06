@@ -3,15 +3,15 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
-    "scripts": {
-      "dev": "next dev -p 3000",
-      "dev:all": "concurrently -k -n NEXT,PLC -c blue,magenta \"next dev -p 3000\" \"npm:plcServer\"",
-      "build": "npm run build:hmi && next build",
-      "start": "next start -p 3000",
-      "plcServer": "node src/app/backend/server/express/index.js",
-      "build:hmi": "cross-env HMI_DEBUG=1 node src/app/scripts/build-pages.mjs",
-      "lint": "next lint"
-    },
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "dev:all": "concurrently -k -n NEXT,PLC -c blue,magenta \"next dev -p 3000\" \"npm:plcServer\"",
+    "build": "npm run build:hmi && next build",
+    "start": "next start -p 3000",
+    "plcServer": "node src/app/backend/server/express/index.js",
+    "build:hmi": "cross-env HMI_DEBUG=1 node src/app/scripts/build-pages.mjs",
+    "lint": "next lint"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "csv-parse": "^6.1.0",

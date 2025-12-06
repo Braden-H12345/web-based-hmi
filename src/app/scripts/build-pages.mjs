@@ -99,7 +99,7 @@ for (const file of fs.readdirSync(SRC)) {
     console.dir(rows, { depth: null });
   }
 
-  const components = rows
+const components = rows
     .map((r, idx) => {
       const type = (r.component_type ?? r["component_type"] ?? "").trim();
       if (!type) {
@@ -108,12 +108,49 @@ for (const file of fs.readdirSync(SRC)) {
       }
 
       const labelRaw = r.label ?? r["label"];
-      // If your CSV dialect kept surrounding quotes on label, strip them
       const label =
         typeof labelRaw === "string" ? labelRaw.replace(/^"|"$/g, "") : labelRaw;
 
+      // parse extra_props to an object (keeps your existing helper)
       const extra = parseExtraProps(r.extra_props ?? r["extra_props"], idx + 2);
-      const extraObj = (extra && typeof extra === "object" && !Array.isArray(extra)) ? extra : {};
+      const extraObj =
+        extra && typeof extra === "object" && !Array.isArray(extra) ? extra : {};
+
+      // prefer new column 'modbusTag'; fallback to legacy 'tag'
+      const rawTag = r.modbusTag ?? r["modbusTag"] ?? r.tag ?? r["tag"];
+      let modbusTagNum =
+        rawTag == null || String(rawTag).trim() === ""
+          ? undefined
+          : Number(rawTag);
+
+      if (modbusTagNum != null && Number.isNaN(modbusTagNum)) {
+        console.warn(
+          `⚠️ Invalid modbusTag on row ${idx + 2}:`,
+          rawTag,
+          "→ dropping it"
+        );
+        modbusTagNum = undefined;
+      }
+
+      // Build base props (common)
+      const props = {
+        plcId: r.plc_id ? +r.plc_id : undefined,
+        label,
+        ...extraObj,
+      };
+
+      // Attach modbusTag only for HMI parts that use it
+      if (
+        ["Indicator", "MomentaryButton", "ToggleButton"].includes(type) &&
+        typeof modbusTagNum === "number"
+      ) {
+        props.modbusTag = modbusTagNum;
+      }
+
+      // NOTE:
+      //  - We DO NOT include the legacy string 'tag' anymore.
+      //  - PLCConfig will get its fields (plcId, plcIpAddress, plcPort, apiBase, ...)
+      //    from extra_props and does not need modbusTag.
 
       return {
         type,
@@ -123,12 +160,7 @@ for (const file of fs.readdirSync(SRC)) {
           w: +r.w || 1,
           h: +r.h || 1,
         },
-        props: {
-          plcId: r.plc_id ? +r.plc_id : undefined,
-          tag: r.tag?.toString(),
-          label,
-          ...extraObj,
-        },
+        props,
         _sourceRow: idx + 2,
       };
     })

@@ -59,6 +59,7 @@ router.get("/:id/read/:tag", async(req, res) => {
     try
     {
         const result = await readTag(req.params.tag, req.params.id);
+        console.log('Reading tag ',  req.params.tag, ' result ', result);
         res.status(200).json({tag: req.params.tag, value: result});
         //console.log("Attempted to read tag ", req.params.tag, " for PLC ", req.params.id);
     }
