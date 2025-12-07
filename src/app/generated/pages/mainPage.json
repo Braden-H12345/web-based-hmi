@@ -1,0 +1,52 @@
+{
+  "slug": "mainPage",
+  "components": [
+    {
+      "type": "PLCConfig",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "",
+        "plcIpAddress": "127.0.0.1",
+        "plcPort": 4000,
+        "apiBase": "/api/plc"
+      },
+      "_sourceRow": 2
+    },
+    {
+      "type": "PageChanger",
+      "layout": {
+        "x": 1,
+        "y": 3,
+        "w": 40,
+        "h": 40
+      },
+      "props": {
+        "label": "",
+        "path": "/home",
+        "pageName": "Home"
+      },
+      "_sourceRow": 3
+    },
+    {
+      "type": "PageChanger",
+      "layout": {
+        "x": 2,
+        "y": 4,
+        "w": 40,
+        "h": 40
+      },
+      "props": {
+        "label": "",
+        "path": "/test",
+        "pageName": "Test"
+      },
+      "_sourceRow": 4
+    }
+  ]
+}

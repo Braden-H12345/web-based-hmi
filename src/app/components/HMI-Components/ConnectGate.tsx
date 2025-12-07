@@ -11,13 +11,20 @@ type Props = {
 };
 
 export default function ConnectGate({ children, autoRetryMs = 0 }: Props) {
-  const { connected, connecting, connect, lastError } = usePLC();
+  const { connected, connecting, connect, lastError, disconnect, plcId } = usePLC();
 
   // Keep the latest connect function in a ref so we can call it from effects
   const connectRef = useRef(connect);
   useEffect(() => {
     connectRef.current = connect;
   }, [connect]);
+
+
+  //same logic for disconnect ref
+    const disconnectRef = useRef(disconnect);
+  useEffect(() => {
+    disconnectRef.current = disconnect;
+  }, [disconnect]);
 
   // Timer for optional auto-retry
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -44,6 +51,29 @@ export default function ConnectGate({ children, autoRetryMs = 0 }: Props) {
       connectRef.current().catch(() => {});
     }, autoRetryMs);
   }, [connected, connecting, autoRetryMs]);
+
+useEffect(() => {
+  function handleDisconnect() {
+    disconnectRef.current()
+      .catch(async () => {
+        await fetch("/api/plc/debug", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ event: "disconnect-catch", plcId }),
+          // keepalive: true, // only needed if you're relying on this during unload
+        });
+      });
+  }
+
+  window.addEventListener("pagehide", handleDisconnect);
+
+  return () => {
+    window.removeEventListener("pagehide", handleDisconnect);
+    handleDisconnect(); // do the same on SPA unmount
+  };
+}, []);
+
+  
 
   // UI
   if (connecting) {

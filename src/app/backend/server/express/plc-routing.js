@@ -43,6 +43,7 @@ router.post("/:id/connect", async (req, res) => {
 router.post("/:id/disconnect", async(req, res) => {
 
     try {
+        console.log("Disconnect route hit", req.params.id)
         await disconnectPLC(req.params.id);
         res.sendStatus(200);
     } catch (err) {
@@ -106,6 +107,18 @@ router.post("/:id/write", async(req, res) => {
         res.status(502).json({error: err.message});
     }
 
+});
+
+//DEBUG MESSAGING - SO MESSAGES CAN BE LOGGED INSIDE A COMPONENT
+router.post("/debug", async(req, res) => {
+
+    try {
+        console.log("Disconnect route hit", req.params.id)
+        await disconnectPLC(req.params.id);
+        res.sendStatus(200);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 export default router;

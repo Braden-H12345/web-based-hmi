@@ -9,26 +9,21 @@ import React, {
 } from "react";
 
 export interface PLCContextType {
-  // your existing names
   plcId: number;
   plcIpAddress: string;
   plcPort: number;
 
-  // optional extras you may already pass
   unitId?: number;
   apiBase?: string; // default "/api/plc"
   pollMs?: number;
 
-  // connection state
   connected: boolean;
   connecting: boolean;
   lastError: string | null;
 
-  // actions (connection only)
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
 
-  // runtime config updates (if you need to swap PLCs)
   setConfig: (patch: Partial<Pick<PLCContextType,
     "plcId" | "plcIpAddress" | "plcPort" | "unitId" | "apiBase" | "pollMs">>) => void;
 }
@@ -104,9 +99,11 @@ export const PLCProvider = ({
 
   const disconnect = useCallback(async () => {
     try {
+      console.log("Disconnecting PLC");
       await fetch(`${base}/${cfg.plcId}/disconnect`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        keepalive: true,
       });
     } catch {}
     setConnected(false);

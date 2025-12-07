@@ -1,0 +1,86 @@
+{
+  "slug": "Page 3",
+  "components": [
+    {
+      "type": "PLCConfig",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "",
+        "plcIpAddress": "192.168.100.69",
+        "plcPort": 502,
+        "apiBase": "/api/plc"
+      },
+      "_sourceRow": 2
+    },
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Input 1",
+        "shape": "circle",
+        "pollTimeout": 2000,
+        "modbusTag": 100008
+      },
+      "_sourceRow": 3
+    },
+    {
+      "type": "MomentaryButton",
+      "layout": {
+        "x": 1,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Override",
+        "pulseMs": 1000,
+        "modbusTag": 104
+      },
+      "_sourceRow": 4
+    },
+    {
+      "type": "MomentaryButton",
+      "layout": {
+        "x": 3,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Override 2",
+        "pulseMs": 1000,
+        "modbusTag": 105
+      },
+      "_sourceRow": 5
+    },
+    {
+      "type": "ToggleButton",
+      "layout": {
+        "x": 2,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "ADA Door",
+        "modbusTag": 210
+      },
+      "_sourceRow": 6
+    }
+  ]
+}
