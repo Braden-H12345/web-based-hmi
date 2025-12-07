@@ -99,7 +99,6 @@ export const PLCProvider = ({
 
   const disconnect = useCallback(async () => {
     try {
-      console.log("Disconnecting PLC");
       await fetch(`${base}/${cfg.plcId}/disconnect`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

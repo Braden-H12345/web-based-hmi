@@ -19,6 +19,8 @@ export default function Home() {
       <br></br>
 
       <PageChanger path = "/Page3" pageName="Page 3"></PageChanger>
+      <br></br>
+      <PageChanger path = "/demo" pageName="Demo"></PageChanger>
     </div>
   );
 }

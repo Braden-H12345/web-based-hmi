@@ -1,0 +1,335 @@
+{
+  "slug": "demo",
+  "components": [
+    {
+      "type": "PLCConfig",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "",
+        "plcIpAddress": "192.168.10.40",
+        "plcPort": 502,
+        "apiBase": "/api/plc"
+      },
+      "_sourceRow": 2
+    },
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "OVR 1",
+        "shape": "circle",
+        "pollTimeout": 2000,
+        "modbusTag": 401
+      },
+      "_sourceRow": 3
+    },
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "OVR 2",
+        "shape": "circle",
+        "pollTimeout": 2000,
+        "modbusTag": 402
+      },
+      "_sourceRow": 4
+    },
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "OVR 3",
+        "shape": "circle",
+        "pollTimeout": 2000,
+        "modbusTag": 403
+      },
+      "_sourceRow": 5
+    },
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "OVR 4",
+        "shape": "circle",
+        "pollTimeout": 2000,
+        "modbusTag": 404
+      },
+      "_sourceRow": 6
+    },
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "OVR 5",
+        "shape": "circle",
+        "pollTimeout": 2000,
+        "modbusTag": 405
+      },
+      "_sourceRow": 7
+    },
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "OVR 6",
+        "shape": "circle",
+        "pollTimeout": 2000,
+        "modbusTag": 406
+      },
+      "_sourceRow": 8
+    },
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "OVR 7",
+        "shape": "circle",
+        "pollTimeout": 2000,
+        "modbusTag": 407
+      },
+      "_sourceRow": 9
+    },
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "OVR 8",
+        "shape": "circle",
+        "pollTimeout": 2000,
+        "modbusTag": 408
+      },
+      "_sourceRow": 10
+    },
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Input 1",
+        "shape": "circle",
+        "pollTimeout": 2000,
+        "modbusTag": 100001
+      },
+      "_sourceRow": 11
+    },
+    {
+      "type": "Indicator",
+      "layout": {
+        "x": 1,
+        "y": 1,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Input 2",
+        "shape": "circle",
+        "pollTimeout": 2000,
+        "modbusTag": 100002
+      },
+      "_sourceRow": 12
+    },
+    {
+      "type": "MomentaryButton",
+      "layout": {
+        "x": 1,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Override 1",
+        "pulseMs": 1000,
+        "modbusTag": 101
+      },
+      "_sourceRow": 13
+    },
+    {
+      "type": "MomentaryButton",
+      "layout": {
+        "x": 1,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Override 2",
+        "pulseMs": 1000,
+        "modbusTag": 102
+      },
+      "_sourceRow": 14
+    },
+    {
+      "type": "MomentaryButton",
+      "layout": {
+        "x": 1,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Override 3",
+        "pulseMs": 1000,
+        "modbusTag": 103
+      },
+      "_sourceRow": 15
+    },
+    {
+      "type": "MomentaryButton",
+      "layout": {
+        "x": 1,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Override 4",
+        "pulseMs": 1000,
+        "modbusTag": 104
+      },
+      "_sourceRow": 16
+    },
+    {
+      "type": "MomentaryButton",
+      "layout": {
+        "x": 1,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Override 5",
+        "pulseMs": 1000,
+        "modbusTag": 105
+      },
+      "_sourceRow": 17
+    },
+    {
+      "type": "MomentaryButton",
+      "layout": {
+        "x": 1,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Override 6",
+        "pulseMs": 1000,
+        "modbusTag": 106
+      },
+      "_sourceRow": 18
+    },
+    {
+      "type": "MomentaryButton",
+      "layout": {
+        "x": 1,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Override 7",
+        "pulseMs": 1000,
+        "modbusTag": 107
+      },
+      "_sourceRow": 19
+    },
+    {
+      "type": "MomentaryButton",
+      "layout": {
+        "x": 1,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "Override 8",
+        "pulseMs": 1000,
+        "modbusTag": 108
+      },
+      "_sourceRow": 20
+    },
+    {
+      "type": "ToggleButton",
+      "layout": {
+        "x": 2,
+        "y": 3,
+        "w": 2,
+        "h": 1
+      },
+      "props": {
+        "plcId": 1,
+        "label": "ADA Door",
+        "modbusTag": 210
+      },
+      "_sourceRow": 21
+    }
+  ]
+}

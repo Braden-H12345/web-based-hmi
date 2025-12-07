@@ -113,8 +113,7 @@ router.post("/:id/write", async(req, res) => {
 router.post("/debug", async(req, res) => {
 
     try {
-        console.log("Disconnect route hit", req.params.id)
-        await disconnectPLC(req.params.id);
+        console.log("Debug msg: ", req.params.body)
         res.sendStatus(200);
     } catch (err) {
         res.status(500).json({ error: err.message });
