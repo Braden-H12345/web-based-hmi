@@ -7,6 +7,9 @@ import ModbusRTU from "modbus-serial";
  */
 const activePLCs = {}; // Map of ID -> { client, host, port, unitId }
 
+const isClientOpen = (c) =>
+  typeof c?.isOpen === "function" ? c.isOpen() : !!c?.isOpen;
+
 // ---------- INTERNALS (not exported) ----------
 
 // Same tag mapping you already had.
@@ -40,8 +43,8 @@ function getEntry(id) {
 
 async function safeClose(client) {
   try {
-    if (client?.isOpen?.()) {
-      await client.close();
+    if (isClientOpen(client)) {
+      await new Promise((resolve) => client.close(() => resolve()));
     }
   } catch {
     // ignore
@@ -64,7 +67,7 @@ export async function establishConnection(ipAddress, portToUse, id, unitId) {
   // If we already have a client open to the same target, reuse it
   if (
     existing &&
-    existing.client?.isOpen?.() &&
+    isClientOpen(existing.client) &&
     existing.host === ipAddress &&
     existing.port === portToUse &&
     existing.unitId === resolvedUnit
@@ -96,6 +99,7 @@ export async function establishConnection(ipAddress, portToUse, id, unitId) {
   console.log("ipAddress: ", ipAddress);
   console.log("port: ", portToUse);
   console.log("id (plcId): ", id, "unitId: ", resolvedUnit);
+  console.log("[modbus] isOpen type:", typeof modbusClient.isOpen, "value:", modbusClient.isOpen);
 }
 
 // DISCONNECT FROM PLC
@@ -121,7 +125,7 @@ export async function setTag(modbusTag, state, id) {
   const entry = getEntry(id);
   const modbusClient = entry.client;
 
-  if (!modbusClient?.isOpen?.()) {
+  if (!isClientOpen(modbusClient)) {
     throw new Error(`Client for PLC ${id} is not open`);
   }
 
@@ -138,7 +142,7 @@ export async function readTag(modbusTag, id) {
   const entry = getEntry(id);
   const modbusClient = entry.client;
 
-  if (!modbusClient?.isOpen?.()) {
+  if (!isClientOpen(modbusClient)) {
     throw new Error(`Client for PLC ${id} is not open`);
   }
 
