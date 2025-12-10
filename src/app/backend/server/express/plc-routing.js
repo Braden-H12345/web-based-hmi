@@ -109,7 +109,8 @@ router.post("/:id/write", async(req, res) => {
 
 });
 
-//DEBUG MESSAGING - SO MESSAGES CAN BE LOGGED INSIDE A COMPONENT
+//DEBUG MESSAGING - so messages can be logged to server from components that have nothing to do with the server.
+// Not really needed just an idea I had
 router.post("/debug", async(req, res) => {
 
     try {

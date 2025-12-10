@@ -1,4 +1,5 @@
-// src/app/components/HMI-Components/ConnectGate.tsx
+
+
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -29,7 +30,7 @@ export default function ConnectGate({ children, autoRetryMs = 0 }: Props) {
   // Timer for optional auto-retry
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Try once on mount (no dep on `connect`, so it won't loop on re-renders)
+  // Try once on mount
   useEffect(() => {
     connectRef.current().catch(() => {});
     return () => {
@@ -40,7 +41,7 @@ export default function ConnectGate({ children, autoRetryMs = 0 }: Props) {
     };
   }, []);
 
-  // Optional: schedule auto-retry only when we're idle and not connected
+  //schedule auto-retry only when we're idle and not connected
   useEffect(() => {
     if (autoRetryMs <= 0) return;
     if (connected || connecting) return;      // only when idle & disconnected
@@ -60,7 +61,7 @@ useEffect(() => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ event: "disconnect-catch", plcId }),
-          // keepalive: true, // only needed if you're relying on this during unload
+          // keepalive: true, //optional
         });
       });
   }
@@ -69,7 +70,7 @@ useEffect(() => {
 
   return () => {
     window.removeEventListener("pagehide", handleDisconnect);
-    handleDisconnect(); // do the same on SPA unmount
+    handleDisconnect();
   };
 }, []);
 

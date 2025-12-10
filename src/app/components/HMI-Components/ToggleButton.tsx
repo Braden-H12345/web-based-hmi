@@ -78,7 +78,6 @@ function ToggleButton({
       });
       if (!res.ok) throw new Error(`Write failed ${res.status}`);
 
-      // Optimistically set, then confirm with one immediate read
       setToggled(next);
 
       // confirm

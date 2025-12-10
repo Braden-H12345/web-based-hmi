@@ -21,7 +21,7 @@ if (typeof cfg === "string") {
   try { cfg = JSON.parse(cfg); } catch { cfg = null; }
 }
 
-// hard fail if missing/invalid (no fallbacks!)
+// hard fail if missing/invalid
 if (!cfg || cfg.plcId == null || !cfg.plcIpAddress || cfg.plcPort == null) {
   return (
     <div className="p-6">

@@ -1,3 +1,6 @@
+//This is just a test page. No longer used
+
+
 "use client";
 import {useEffect, useState} from "react";
 import { PLCProvider } from "../Context/PLCContext";
@@ -11,7 +14,6 @@ export default function HMIPage() {
   const ip = "192.168.100.69";
   const port = 502;
 
-  // Optional: track if PLC is connected
   const [connected, setConnected] = useState(false);
 
 
@@ -41,7 +43,6 @@ try {
     connectPLC();
   }, [pagePLCId, ip, port]);
 
-  // ✅ Optionally show loading state while PLC connects
   if (!connected) return <p>Connecting to PLC...</p>;
 
   return (

@@ -12,7 +12,7 @@
       "props": {
         "plcId": 1,
         "label": "",
-        "plcIpAddress": "192.168.100.69",
+        "plcIpAddress": "192.168.10.20",
         "plcPort": 502,
         "apiBase": "/api/plc"
       },
@@ -165,7 +165,7 @@
       "props": {
         "plcId": 1,
         "label": "Input 1",
-        "shape": "circle",
+        "shape": "rectangle",
         "pollTimeout": 2000,
         "modbusTag": 100001
       },
@@ -182,7 +182,7 @@
       "props": {
         "plcId": 1,
         "label": "Input 2",
-        "shape": "circle",
+        "shape": "rectangle",
         "pollTimeout": 2000,
         "modbusTag": 100002
       },
@@ -327,7 +327,7 @@
       "props": {
         "plcId": 1,
         "label": "ADA Door",
-        "modbusTag": 210
+        "modbusTag": 213
       },
       "_sourceRow": 21
     }

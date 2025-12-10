@@ -10,9 +10,6 @@ const activePLCs = {}; // Map of ID -> { client, host, port, unitId }
 const isClientOpen = (c) =>
   typeof c?.isOpen === "function" ? c.isOpen() : !!c?.isOpen;
 
-// ---------- INTERNALS (not exported) ----------
-
-// Same tag mapping you already had.
 function resolveTag(tag) {
   const num = parseInt(tag);
 
@@ -51,15 +48,12 @@ async function safeClose(client) {
   }
 }
 
-// ---------- PUBLIC API (same signatures) ----------
-
-// CONNECT TO PLC (idempotent per id + (ip,port,unitId))
+// CONNECT TO PLC
 export async function establishConnection(ipAddress, portToUse, id, unitId) {
   if (!ipAddress || !portToUse) {
     throw new Error("Missing ip or port");
   }
 
-  // keep prior behavior: if unitId not given, fall back to id (as number)
   const resolvedUnit = typeof unitId === "number" ? unitId : Number(id) || 1;
 
   const existing = activePLCs[id];
@@ -112,7 +106,7 @@ export async function disconnectPLC(id) {
   delete activePLCs[id];
 }
 
-// SET PLC TAG (writes a coil; keeps your existing "tag-1" addressing)
+// SET PLC TAG (writes a coil)
 export async function setTag(modbusTag, state, id) {
   if (modbusTag == null) throw new Error("Missing tag");
   const address = Number(modbusTag) - 1;
