@@ -1,36 +1,24 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+This project is the start of a web based modbus communication protocol for building HMIs.
 
-First, run the development server:
+Currently (as of 12/9/25) the pages can be made via uploading or creating a csv (technically a scsv as one of the properties is raw JSON which needs commas, so pure csv wont work). Once a csv file is present you can run the "build HMIs" batch file and all will be rebuilt (including any that were edited). Then just refresh the page if the page is open. To launch the app simply run "run-server.bat" this should launch both the PLC backend server and the web server in a single command prompt window
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Packages needed
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+modbus-serial, for express server communication with PLCs: https://www.npmjs.com/package/modbus-serial
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+cors to allow cross origin port communication. Purely for running both servers in one window: https://www.npmjs.com/package/cors
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+csv-parse to parse the csv files: https://www.npmjs.com/package/csv-parse
 
-## Learn More
+express to host the modbus-serial API: https://expressjs.com/
 
-To learn more about Next.js, take a look at the following resources:
+react as that is the framework this is built on: https://react.dev/
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Node js to be able to use node packages: https://nodejs.org/
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Additional packages (not needed as of now, but may be in the future)
 
-## Deploy on Vercel
+react-dnd this allows for drag and drop functionality. I figure it may be useful for editing pages quickly, but did not see an eloquent way to implement it immediatly as I would have needed to essentially duplicate components so that there are draggable and nondraggable versions of the same thing: https://www.npmjs.com/package/react-dnd
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
